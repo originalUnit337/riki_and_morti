@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:riki_and_morti/config/dependencies/init.dart';
+import 'package:riki_and_morti/config/navigation/app_router.dart';
+import 'package:riki_and_morti/config/theme/app_theme.dart';
 
-void main() {
-  runApp(const MainApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
+
+  final config = AppRouter().router;
+  runApp(MainApp(config: config));
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final GoRouter config;
+  const MainApp({required this.config, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp.router(
+      theme: AppTheme.lightAppTheme,
+      darkTheme: AppTheme.darkAppTheme,
+      routerConfig: config,
     );
   }
 }
