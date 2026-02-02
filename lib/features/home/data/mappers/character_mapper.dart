@@ -16,9 +16,8 @@ class CharacterMapper {
       created: model.created,
       origin: OriginMapper.fromModel(model.origin),
       location: LocationMapper.fromModel(model.location),
-      episodes: model.episodes,
+      episode: model.episode,
       image: model.image,
-      url: model.url,
     );
   }
 
@@ -30,10 +29,9 @@ class CharacterMapper {
       species: model.species,
       type: model.type,
       created: model.created,
-      episodes: model.episode,
+      episode: model.episode,
       gender: model.gender,
       image: model.image,
-      url: model.url,
       location: LocationMapper.fromModel(model.location),
       origin: OriginMapper.fromModel(model.origin),
     );
@@ -47,10 +45,9 @@ class CharacterMapper {
       species: model.species,
       type: model.type,
       created: model.created,
-      episode: model.episodes,
+      episode: model.episode,
       gender: model.gender,
       image: model.image,
-      url: model.url,
       location: model.location,
       origin: model.origin,
     );

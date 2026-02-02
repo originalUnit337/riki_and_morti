@@ -14,7 +14,10 @@ class CharacterApiImpl implements CharacterApi {
       query Characters($page: Int!) {
           characters(page: $page) {
             info {
-              next 
+              count
+              pages
+              next
+              prev
             }
             results {
               id
@@ -22,15 +25,18 @@ class CharacterApiImpl implements CharacterApi {
               status
               species
               image
-            origin {
-              name   
-              url
-            location {
-              name
-              url
-            }
-            episode {
-              id
+              type
+              gender
+              created
+              origin {
+                name
+              }
+              location {
+                name
+              }
+              episode {
+                episode
+              }
             }
           }
         }
@@ -56,9 +62,6 @@ class CharacterApiImpl implements CharacterApi {
 
     final hasNext = data['info']['next'] != null;
 
-    return PagedResult(
-      items: results,
-      hasNext: hasNext,
-    );
+    return PagedResult(items: results, hasNext: hasNext);
   }
 }

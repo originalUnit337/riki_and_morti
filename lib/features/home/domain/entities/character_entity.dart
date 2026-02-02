@@ -11,8 +11,7 @@ class CharacterEntity {
   final OriginEntity origin;
   final LocationEntity location;
   final String image;
-  final List<String> episodes;
-  final String url;
+  final List<String> episode;
   final DateTime created;
 
   const CharacterEntity({
@@ -25,8 +24,7 @@ class CharacterEntity {
     required this.origin,
     required this.location,
     required this.image,
-    required this.episodes,
-    required this.url,
+    required this.episode,
     required this.created,
   });
 }

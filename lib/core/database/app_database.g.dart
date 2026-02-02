@@ -101,15 +101,6 @@ class $CharactersTable extends Characters
         type: DriftSqlType.string,
         requiredDuringInsert: true,
       ).withConverter<List<String>>($CharactersTable.$converterepisode);
-  static const VerificationMeta _urlMeta = const VerificationMeta('url');
-  @override
-  late final GeneratedColumn<String> url = GeneratedColumn<String>(
-    'url',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
   static const VerificationMeta _createdMeta = const VerificationMeta(
     'created',
   );
@@ -133,7 +124,6 @@ class $CharactersTable extends Characters
     location,
     image,
     episode,
-    url,
     created,
   ];
   @override
@@ -199,14 +189,6 @@ class $CharactersTable extends Characters
     } else if (isInserting) {
       context.missing(_imageMeta);
     }
-    if (data.containsKey('url')) {
-      context.handle(
-        _urlMeta,
-        url.isAcceptableOrUnknown(data['url']!, _urlMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_urlMeta);
-    }
     if (data.containsKey('created')) {
       context.handle(
         _createdMeta,
@@ -270,10 +252,6 @@ class $CharactersTable extends Characters
           data['${effectivePrefix}episode'],
         )!,
       ),
-      url: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}url'],
-      )!,
       created: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created'],
@@ -306,7 +284,6 @@ class CharacterDbModel extends DataClass
   final LocationModel location;
   final String image;
   final List<String> episode;
-  final String url;
   final DateTime created;
   const CharacterDbModel({
     required this.id,
@@ -319,7 +296,6 @@ class CharacterDbModel extends DataClass
     required this.location,
     required this.image,
     required this.episode,
-    required this.url,
     required this.created,
   });
   @override
@@ -347,7 +323,6 @@ class CharacterDbModel extends DataClass
         $CharactersTable.$converterepisode.toSql(episode),
       );
     }
-    map['url'] = Variable<String>(url);
     map['created'] = Variable<DateTime>(created);
     return map;
   }
@@ -364,7 +339,6 @@ class CharacterDbModel extends DataClass
       location: Value(location),
       image: Value(image),
       episode: Value(episode),
-      url: Value(url),
       created: Value(created),
     );
   }
@@ -385,7 +359,6 @@ class CharacterDbModel extends DataClass
       location: serializer.fromJson<LocationModel>(json['location']),
       image: serializer.fromJson<String>(json['image']),
       episode: serializer.fromJson<List<String>>(json['episode']),
-      url: serializer.fromJson<String>(json['url']),
       created: serializer.fromJson<DateTime>(json['created']),
     );
   }
@@ -403,7 +376,6 @@ class CharacterDbModel extends DataClass
       'location': serializer.toJson<LocationModel>(location),
       'image': serializer.toJson<String>(image),
       'episode': serializer.toJson<List<String>>(episode),
-      'url': serializer.toJson<String>(url),
       'created': serializer.toJson<DateTime>(created),
     };
   }
@@ -419,7 +391,6 @@ class CharacterDbModel extends DataClass
     LocationModel? location,
     String? image,
     List<String>? episode,
-    String? url,
     DateTime? created,
   }) => CharacterDbModel(
     id: id ?? this.id,
@@ -432,7 +403,6 @@ class CharacterDbModel extends DataClass
     location: location ?? this.location,
     image: image ?? this.image,
     episode: episode ?? this.episode,
-    url: url ?? this.url,
     created: created ?? this.created,
   );
   CharacterDbModel copyWithCompanion(CharactersCompanion data) {
@@ -447,7 +417,6 @@ class CharacterDbModel extends DataClass
       location: data.location.present ? data.location.value : this.location,
       image: data.image.present ? data.image.value : this.image,
       episode: data.episode.present ? data.episode.value : this.episode,
-      url: data.url.present ? data.url.value : this.url,
       created: data.created.present ? data.created.value : this.created,
     );
   }
@@ -465,7 +434,6 @@ class CharacterDbModel extends DataClass
           ..write('location: $location, ')
           ..write('image: $image, ')
           ..write('episode: $episode, ')
-          ..write('url: $url, ')
           ..write('created: $created')
           ..write(')'))
         .toString();
@@ -483,7 +451,6 @@ class CharacterDbModel extends DataClass
     location,
     image,
     episode,
-    url,
     created,
   );
   @override
@@ -500,7 +467,6 @@ class CharacterDbModel extends DataClass
           other.location == this.location &&
           other.image == this.image &&
           other.episode == this.episode &&
-          other.url == this.url &&
           other.created == this.created);
 }
 
@@ -515,7 +481,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
   final Value<LocationModel> location;
   final Value<String> image;
   final Value<List<String>> episode;
-  final Value<String> url;
   final Value<DateTime> created;
   const CharactersCompanion({
     this.id = const Value.absent(),
@@ -528,7 +493,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     this.location = const Value.absent(),
     this.image = const Value.absent(),
     this.episode = const Value.absent(),
-    this.url = const Value.absent(),
     this.created = const Value.absent(),
   });
   CharactersCompanion.insert({
@@ -542,7 +506,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     required LocationModel location,
     required String image,
     required List<String> episode,
-    required String url,
     required DateTime created,
   }) : name = Value(name),
        status = Value(status),
@@ -553,7 +516,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
        location = Value(location),
        image = Value(image),
        episode = Value(episode),
-       url = Value(url),
        created = Value(created);
   static Insertable<CharacterDbModel> custom({
     Expression<int>? id,
@@ -566,7 +528,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     Expression<String>? location,
     Expression<String>? image,
     Expression<String>? episode,
-    Expression<String>? url,
     Expression<DateTime>? created,
   }) {
     return RawValuesInsertable({
@@ -580,7 +541,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
       if (location != null) 'location': location,
       if (image != null) 'image': image,
       if (episode != null) 'episode': episode,
-      if (url != null) 'url': url,
       if (created != null) 'created': created,
     });
   }
@@ -596,7 +556,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     Value<LocationModel>? location,
     Value<String>? image,
     Value<List<String>>? episode,
-    Value<String>? url,
     Value<DateTime>? created,
   }) {
     return CharactersCompanion(
@@ -610,7 +569,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
       location: location ?? this.location,
       image: image ?? this.image,
       episode: episode ?? this.episode,
-      url: url ?? this.url,
       created: created ?? this.created,
     );
   }
@@ -654,9 +612,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
         $CharactersTable.$converterepisode.toSql(episode.value),
       );
     }
-    if (url.present) {
-      map['url'] = Variable<String>(url.value);
-    }
     if (created.present) {
       map['created'] = Variable<DateTime>(created.value);
     }
@@ -676,7 +631,6 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
           ..write('location: $location, ')
           ..write('image: $image, ')
           ..write('episode: $episode, ')
-          ..write('url: $url, ')
           ..write('created: $created')
           ..write(')'))
         .toString();
@@ -706,7 +660,6 @@ typedef $$CharactersTableCreateCompanionBuilder =
       required LocationModel location,
       required String image,
       required List<String> episode,
-      required String url,
       required DateTime created,
     });
 typedef $$CharactersTableUpdateCompanionBuilder =
@@ -721,7 +674,6 @@ typedef $$CharactersTableUpdateCompanionBuilder =
       Value<LocationModel> location,
       Value<String> image,
       Value<List<String>> episode,
-      Value<String> url,
       Value<DateTime> created,
     });
 
@@ -785,11 +737,6 @@ class $$CharactersTableFilterComposer
   get episode => $composableBuilder(
     column: $table.episode,
     builder: (column) => ColumnWithTypeConverterFilters(column),
-  );
-
-  ColumnFilters<String> get url => $composableBuilder(
-    column: $table.url,
-    builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<DateTime> get created => $composableBuilder(
@@ -857,11 +804,6 @@ class $$CharactersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get url => $composableBuilder(
-    column: $table.url,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<DateTime> get created => $composableBuilder(
     column: $table.created,
     builder: (column) => ColumnOrderings(column),
@@ -906,9 +848,6 @@ class $$CharactersTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<List<String>, String> get episode =>
       $composableBuilder(column: $table.episode, builder: (column) => column);
-
-  GeneratedColumn<String> get url =>
-      $composableBuilder(column: $table.url, builder: (column) => column);
 
   GeneratedColumn<DateTime> get created =>
       $composableBuilder(column: $table.created, builder: (column) => column);
@@ -955,7 +894,6 @@ class $$CharactersTableTableManager
                 Value<LocationModel> location = const Value.absent(),
                 Value<String> image = const Value.absent(),
                 Value<List<String>> episode = const Value.absent(),
-                Value<String> url = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
               }) => CharactersCompanion(
                 id: id,
@@ -968,7 +906,6 @@ class $$CharactersTableTableManager
                 location: location,
                 image: image,
                 episode: episode,
-                url: url,
                 created: created,
               ),
           createCompanionCallback:
@@ -983,7 +920,6 @@ class $$CharactersTableTableManager
                 required LocationModel location,
                 required String image,
                 required List<String> episode,
-                required String url,
                 required DateTime created,
               }) => CharactersCompanion.insert(
                 id: id,
@@ -996,7 +932,6 @@ class $$CharactersTableTableManager
                 location: location,
                 image: image,
                 episode: episode,
-                url: url,
                 created: created,
               ),
           withReferenceMapper: (p0) => p0

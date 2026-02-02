@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:riki_and_morti/config/dependencies/init_bloc.dart';
 import 'package:riki_and_morti/config/dependencies/init_datasources.dart';
 import 'package:riki_and_morti/config/dependencies/init_repositories.dart';
 import 'package:riki_and_morti/config/dependencies/init_usecases.dart';
@@ -18,4 +19,5 @@ Future<void> initializeDependencies() async {
   initDataSources();
   initRepositories();
   initUseCases();
+  initBloc();
 }

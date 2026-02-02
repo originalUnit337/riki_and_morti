@@ -23,7 +23,6 @@ class Characters extends Table {
   TextColumn get location => text().map(const LocationConverter())();
   TextColumn get image => text()();
   TextColumn get episode => text().map(const StringListConverter())();
-  TextColumn get url => text()();
   DateTimeColumn get created => dateTime()();
 
   @override

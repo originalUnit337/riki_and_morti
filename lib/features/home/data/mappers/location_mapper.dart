@@ -5,7 +5,6 @@ class LocationMapper {
   static LocationEntity fromModel(LocationModel model) {
     return LocationEntity(
       name: model.name,
-      url: model.url,
     );
   }
 }

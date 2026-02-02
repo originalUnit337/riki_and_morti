@@ -5,7 +5,6 @@ class OriginMapper {
   static OriginEntity fromModel(OriginModel model) {
     return OriginEntity(
       name: model.name,
-      url: model.url,
     );
   }
 }
