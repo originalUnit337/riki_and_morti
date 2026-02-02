@@ -6,7 +6,7 @@ import 'package:riki_and_morti/features/home/presentation/bloc/home_event.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  int _page = 0;
+  int _page = 1;
   bool _hasNext = true;
   bool _isLoading = false;
 
@@ -23,7 +23,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadFirstCharactersEvent event,
     Emitter<HomeState> emit,
   ) async {
-    _page = 0;
+    _page = 1;
     _hasNext = true;
     emit(HomeLoadingState());
     try {

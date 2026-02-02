@@ -37,16 +37,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Riki & Morti')),
+      appBar: AppBar(title: Text('Riki & Morti'),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (BuildContext context, HomeState state) {
             return switch (state) {
               HomeInitial() => Center(child: CircularProgressIndicator()),
-              HomeLoadingState() => Center(
-                child: CircularProgressIndicator(),
-              ),
+              HomeLoadingState() => Center(child: CircularProgressIndicator()),
               HomeLoadedState() => _buildGridView(state),
               HomeErrorState() => Text('Error: ${state.message}'),
             };
@@ -56,23 +55,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  GridView _buildGridView(HomeLoadedState state) {
-    return GridView.builder(
-      controller: _scrollController,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-      ),
-      itemCount: state.characters.length + (state.isLoadingMore ? 1 : 0),
-      itemBuilder: (context, index) {
-        if (index >= state.characters.length) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        final character = state.characters[index];
+  Widget _buildGridView(HomeLoadedState state) {
+    return state.characters.isNotEmpty
+        ? GridView.builder(
+            controller: _scrollController,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+            ),
+            itemCount: state.characters.length + (state.isLoadingMore ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index >= state.characters.length) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final character = state.characters[index];
 
-        return CharacterCard(character: character, onFavoriteTap: () {});
-      },
-    );
+              return CharacterCard(character: character, onFavoriteTap: () {});
+            },
+          )
+        : Center(child: Text('No characters found'));
   }
 }
