@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:riki_and_morti/features/favourites/domain/usecases/set_favourite_character_usecase.dart';
 import 'package:riki_and_morti/features/favourites/domain/usecases/watch_favourites_usecase.dart';
 import 'package:riki_and_morti/features/favourites/presentation/bloc/favourite_event.dart';
 import 'package:riki_and_morti/features/favourites/presentation/bloc/favourite_state.dart';
@@ -8,10 +9,14 @@ import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 
 class FavouriteBloc extends Bloc<FavouriteEvent, FavouriteState> {
   final WatchFavouritesUsecase watchFavouritesUsecase;
+  final SetFavouriteCharacterUsecase setFavouriteCharacterUsecase;
 
-  FavouriteBloc({required this.watchFavouritesUsecase})
-    : super(FavouriteInitial()) {
+  FavouriteBloc({
+    required this.watchFavouritesUsecase,
+    required this.setFavouriteCharacterUsecase,
+  }) : super(FavouriteInitial()) {
     on<FavouritesStarted>(_onStarted);
+    on<SetFavouriteEvent>(_setFavourite);
   }
 
   FutureOr<void> _onStarted(
@@ -21,8 +26,19 @@ class FavouriteBloc extends Bloc<FavouriteEvent, FavouriteState> {
     await emit.forEach<List<CharacterEntity>>(
       await watchFavouritesUsecase.call(),
       onData: (items) => FavouritesLoaded(items: items),
-      onError: (message, __) =>
+      onError: (message, _) =>
           FavouritesErrorState(message: message.toString()),
     );
+  }
+
+  FutureOr<void> _setFavourite(
+    SetFavouriteEvent event,
+    Emitter<FavouriteState> emit,
+  ) async {
+    try {
+      setFavouriteCharacterUsecase.call(params: [event.id, event.value]);
+    } catch (e) {
+      emit(FavouritesErrorState(message: e.toString()));
+    }
   }
 }

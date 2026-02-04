@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:riki_and_morti/features/favourites/presentation/bloc/favourite_bloc.dart';
+import 'package:riki_and_morti/features/favourites/presentation/bloc/favourite_event.dart';
 import 'package:riki_and_morti/features/favourites/presentation/bloc/favourite_state.dart';
 import 'package:riki_and_morti/shared/presentation/widgets/character_card.dart';
 
@@ -19,7 +20,7 @@ class FavouriteScreen extends StatelessWidget {
               FavouriteInitial() => Center(child: CircularProgressIndicator()),
               FavouritesLoaded() =>
                 state.items.isNotEmpty
-                    ? _gridViewBuild(state)
+                    ? _gridViewBuild(state, context)
                     : Center(child: Text('There is nothing here :(')),
               FavouritesErrorState() => Center(child: Text(state.message)),
             };
@@ -29,7 +30,7 @@ class FavouriteScreen extends StatelessWidget {
     );
   }
 
-  GridView _gridViewBuild(FavouritesLoaded state) {
+  GridView _gridViewBuild(FavouritesLoaded state, BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -40,7 +41,15 @@ class FavouriteScreen extends StatelessWidget {
       itemBuilder: (_, i) {
         try {
           final character = state.items[i];
-          return CharacterCard(character: character, onFavoriteTap: () {});
+          return CharacterCard(
+            character: character,
+            onFavoriteTap: () => context.read<FavouriteBloc>().add(
+              SetFavouriteEvent(
+                id: character.id,
+                value: !character.isFavourite,
+              ),
+            ),
+          );
         } catch (e) {
           return const Center(child: CircularProgressIndicator());
         }

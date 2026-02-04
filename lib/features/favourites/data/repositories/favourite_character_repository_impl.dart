@@ -14,4 +14,9 @@ class FavouriteCharacterRepositoryImpl implements FavouriteCharacterRepository {
       (list) => list.map(CharacterMapper.dbModelToEntity).toList(),
     );
   }
+  
+  @override
+  Future<void> setFavourite(int id, bool value) {
+    return local.setFavourite(id, value);
+  }
 }

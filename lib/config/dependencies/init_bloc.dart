@@ -10,5 +10,10 @@ void initBloc() {
     ),
   );
 
-  sl.registerFactory<FavouriteBloc>(() => FavouriteBloc(watchFavouritesUsecase: sl()));
+  sl.registerFactory<FavouriteBloc>(
+    () => FavouriteBloc(
+      watchFavouritesUsecase: sl(),
+      setFavouriteCharacterUsecase: sl(),
+    ),
+  );
 }
