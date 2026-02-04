@@ -82,12 +82,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
               return CharacterCard(
                 character: character,
-                onFavoriteTap: () => context.read<HomeBloc>().add(
+                onFavoriteTap: () {
+                  context.read<HomeBloc>().add(
                   SetFavouriteEvent(
                     id: character.id,
                     value: !character.isFavourite,
                   ),
-                ),
+                );
+                },
               );
             },
           )

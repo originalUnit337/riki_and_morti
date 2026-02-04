@@ -29,4 +29,34 @@ class CharacterEntity {
     required this.created,
     required this.isFavourite,
   });
+
+  CharacterEntity copyWith({
+    int? id,
+    String? name,
+    String? status,
+    String? species,
+    String? type,
+    String? gender,
+    OriginEntity? origin,
+    LocationEntity? location,
+    String? image,
+    List<String>? episode,
+    DateTime? created,
+    bool? isFavourite,
+  }) {
+    return CharacterEntity(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      status: status ?? this.status,
+      species: species ?? this.species,
+      type: type ?? this.type,
+      gender: gender ?? this.gender,
+      origin: origin ?? this.origin,
+      location: location ?? this.location,
+      image: image ?? this.image,
+      episode: episode ?? this.episode,
+      created: created ?? this.created,
+      isFavourite: isFavourite ?? this.isFavourite,
+    );
+  }
 }

@@ -82,7 +82,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
+      characters = characters
+          .map(
+            (e) => e.id == event.id ? e.copyWith(isFavourite: event.value) : e,
+          )
+          .toList();
       setFavouriteCharacterUsecase.call(params: [event.id, event.value]);
+      emit(
+        HomeLoadedState(
+          characters: characters,
+          isLoadingMore: false,
+          hasNext: _hasNext,
+        ),
+      );
     } catch (e) {}
   }
 }
