@@ -24,6 +24,7 @@ class Characters extends Table {
   TextColumn get image => text()();
   TextColumn get episode => text().map(const StringListConverter())();
   DateTimeColumn get created => dateTime()();
+  BoolColumn get isFavourite => boolean().withDefault(const Constant(false))();
 
   @override
   Set<Column> get primaryKey => {id};

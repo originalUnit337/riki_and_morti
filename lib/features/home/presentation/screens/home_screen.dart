@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:riki_and_morti/config/navigation/app_routes.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_bloc.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_event.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_state.dart';
-import 'package:riki_and_morti/features/home/presentation/widgets/character_card.dart';
+import 'package:riki_and_morti/shared/presentation/widgets/character_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,7 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Riki & Morti'),
+      appBar: AppBar(
+        title: Text('Riki & Morti'),
+        actions: [
+          IconButton(
+            onPressed: () => context.goNamed(AppRoutes.favourites.name),
+            icon: Icon(Icons.star),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -71,7 +80,15 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               final character = state.characters[index];
 
-              return CharacterCard(character: character, onFavoriteTap: () {});
+              return CharacterCard(
+                character: character,
+                onFavoriteTap: () => context.read<HomeBloc>().add(
+                  SetFavouriteEvent(
+                    id: character.id,
+                    value: !character.isFavourite,
+                  ),
+                ),
+              );
             },
           )
         : Center(child: Text('No characters found'));

@@ -1,8 +1,8 @@
 import 'package:riki_and_morti/core/common/paged_result.dart';
-import 'package:riki_and_morti/features/home/data/data_source/local/character_drift.dart';
+import 'package:riki_and_morti/shared/data/data/data_source/local/character_drift.dart';
 import 'package:riki_and_morti/features/home/data/data_source/remote/character_api.dart';
-import 'package:riki_and_morti/features/home/data/mappers/character_mapper.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/shared/data/mappers/character_mapper.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 import 'package:riki_and_morti/features/home/domain/repositories/character_repository.dart';
 
 class CharacterRepositoryImpl implements CharacterRepository {
@@ -42,5 +42,10 @@ class CharacterRepositoryImpl implements CharacterRepository {
         hasNext: cached.length == pageSize,
       );
     }
+  }
+  
+  @override
+  Future<void> setFavourite(int id, bool value) {
+    return local.setFavourite(id, value);
   }
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 
 sealed class HomeState extends Equatable {}
 

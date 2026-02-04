@@ -112,6 +112,21 @@ class $CharactersTable extends Characters
     type: DriftSqlType.dateTime,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _isFavouriteMeta = const VerificationMeta(
+    'isFavourite',
+  );
+  @override
+  late final GeneratedColumn<bool> isFavourite = GeneratedColumn<bool>(
+    'is_favourite',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_favourite" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -125,6 +140,7 @@ class $CharactersTable extends Characters
     image,
     episode,
     created,
+    isFavourite,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -197,6 +213,15 @@ class $CharactersTable extends Characters
     } else if (isInserting) {
       context.missing(_createdMeta);
     }
+    if (data.containsKey('is_favourite')) {
+      context.handle(
+        _isFavouriteMeta,
+        isFavourite.isAcceptableOrUnknown(
+          data['is_favourite']!,
+          _isFavouriteMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -256,6 +281,10 @@ class $CharactersTable extends Characters
         DriftSqlType.dateTime,
         data['${effectivePrefix}created'],
       )!,
+      isFavourite: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_favourite'],
+      )!,
     );
   }
 
@@ -285,6 +314,7 @@ class CharacterDbModel extends DataClass
   final String image;
   final List<String> episode;
   final DateTime created;
+  final bool isFavourite;
   const CharacterDbModel({
     required this.id,
     required this.name,
@@ -297,6 +327,7 @@ class CharacterDbModel extends DataClass
     required this.image,
     required this.episode,
     required this.created,
+    required this.isFavourite,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -324,6 +355,7 @@ class CharacterDbModel extends DataClass
       );
     }
     map['created'] = Variable<DateTime>(created);
+    map['is_favourite'] = Variable<bool>(isFavourite);
     return map;
   }
 
@@ -340,6 +372,7 @@ class CharacterDbModel extends DataClass
       image: Value(image),
       episode: Value(episode),
       created: Value(created),
+      isFavourite: Value(isFavourite),
     );
   }
 
@@ -360,6 +393,7 @@ class CharacterDbModel extends DataClass
       image: serializer.fromJson<String>(json['image']),
       episode: serializer.fromJson<List<String>>(json['episode']),
       created: serializer.fromJson<DateTime>(json['created']),
+      isFavourite: serializer.fromJson<bool>(json['isFavourite']),
     );
   }
   @override
@@ -377,6 +411,7 @@ class CharacterDbModel extends DataClass
       'image': serializer.toJson<String>(image),
       'episode': serializer.toJson<List<String>>(episode),
       'created': serializer.toJson<DateTime>(created),
+      'isFavourite': serializer.toJson<bool>(isFavourite),
     };
   }
 
@@ -392,6 +427,7 @@ class CharacterDbModel extends DataClass
     String? image,
     List<String>? episode,
     DateTime? created,
+    bool? isFavourite,
   }) => CharacterDbModel(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -404,6 +440,7 @@ class CharacterDbModel extends DataClass
     image: image ?? this.image,
     episode: episode ?? this.episode,
     created: created ?? this.created,
+    isFavourite: isFavourite ?? this.isFavourite,
   );
   CharacterDbModel copyWithCompanion(CharactersCompanion data) {
     return CharacterDbModel(
@@ -418,6 +455,9 @@ class CharacterDbModel extends DataClass
       image: data.image.present ? data.image.value : this.image,
       episode: data.episode.present ? data.episode.value : this.episode,
       created: data.created.present ? data.created.value : this.created,
+      isFavourite: data.isFavourite.present
+          ? data.isFavourite.value
+          : this.isFavourite,
     );
   }
 
@@ -434,7 +474,8 @@ class CharacterDbModel extends DataClass
           ..write('location: $location, ')
           ..write('image: $image, ')
           ..write('episode: $episode, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('isFavourite: $isFavourite')
           ..write(')'))
         .toString();
   }
@@ -452,6 +493,7 @@ class CharacterDbModel extends DataClass
     image,
     episode,
     created,
+    isFavourite,
   );
   @override
   bool operator ==(Object other) =>
@@ -467,7 +509,8 @@ class CharacterDbModel extends DataClass
           other.location == this.location &&
           other.image == this.image &&
           other.episode == this.episode &&
-          other.created == this.created);
+          other.created == this.created &&
+          other.isFavourite == this.isFavourite);
 }
 
 class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
@@ -482,6 +525,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
   final Value<String> image;
   final Value<List<String>> episode;
   final Value<DateTime> created;
+  final Value<bool> isFavourite;
   const CharactersCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -494,6 +538,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     this.image = const Value.absent(),
     this.episode = const Value.absent(),
     this.created = const Value.absent(),
+    this.isFavourite = const Value.absent(),
   });
   CharactersCompanion.insert({
     this.id = const Value.absent(),
@@ -507,6 +552,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     required String image,
     required List<String> episode,
     required DateTime created,
+    this.isFavourite = const Value.absent(),
   }) : name = Value(name),
        status = Value(status),
        species = Value(species),
@@ -529,6 +575,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     Expression<String>? image,
     Expression<String>? episode,
     Expression<DateTime>? created,
+    Expression<bool>? isFavourite,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -542,6 +589,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
       if (image != null) 'image': image,
       if (episode != null) 'episode': episode,
       if (created != null) 'created': created,
+      if (isFavourite != null) 'is_favourite': isFavourite,
     });
   }
 
@@ -557,6 +605,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     Value<String>? image,
     Value<List<String>>? episode,
     Value<DateTime>? created,
+    Value<bool>? isFavourite,
   }) {
     return CharactersCompanion(
       id: id ?? this.id,
@@ -570,6 +619,7 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
       image: image ?? this.image,
       episode: episode ?? this.episode,
       created: created ?? this.created,
+      isFavourite: isFavourite ?? this.isFavourite,
     );
   }
 
@@ -615,6 +665,9 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
     if (created.present) {
       map['created'] = Variable<DateTime>(created.value);
     }
+    if (isFavourite.present) {
+      map['is_favourite'] = Variable<bool>(isFavourite.value);
+    }
     return map;
   }
 
@@ -631,7 +684,8 @@ class CharactersCompanion extends UpdateCompanion<CharacterDbModel> {
           ..write('location: $location, ')
           ..write('image: $image, ')
           ..write('episode: $episode, ')
-          ..write('created: $created')
+          ..write('created: $created, ')
+          ..write('isFavourite: $isFavourite')
           ..write(')'))
         .toString();
   }
@@ -661,6 +715,7 @@ typedef $$CharactersTableCreateCompanionBuilder =
       required String image,
       required List<String> episode,
       required DateTime created,
+      Value<bool> isFavourite,
     });
 typedef $$CharactersTableUpdateCompanionBuilder =
     CharactersCompanion Function({
@@ -675,6 +730,7 @@ typedef $$CharactersTableUpdateCompanionBuilder =
       Value<String> image,
       Value<List<String>> episode,
       Value<DateTime> created,
+      Value<bool> isFavourite,
     });
 
 class $$CharactersTableFilterComposer
@@ -743,6 +799,11 @@ class $$CharactersTableFilterComposer
     column: $table.created,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<bool> get isFavourite => $composableBuilder(
+    column: $table.isFavourite,
+    builder: (column) => ColumnFilters(column),
+  );
 }
 
 class $$CharactersTableOrderingComposer
@@ -808,6 +869,11 @@ class $$CharactersTableOrderingComposer
     column: $table.created,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get isFavourite => $composableBuilder(
+    column: $table.isFavourite,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CharactersTableAnnotationComposer
@@ -851,6 +917,11 @@ class $$CharactersTableAnnotationComposer
 
   GeneratedColumn<DateTime> get created =>
       $composableBuilder(column: $table.created, builder: (column) => column);
+
+  GeneratedColumn<bool> get isFavourite => $composableBuilder(
+    column: $table.isFavourite,
+    builder: (column) => column,
+  );
 }
 
 class $$CharactersTableTableManager
@@ -895,6 +966,7 @@ class $$CharactersTableTableManager
                 Value<String> image = const Value.absent(),
                 Value<List<String>> episode = const Value.absent(),
                 Value<DateTime> created = const Value.absent(),
+                Value<bool> isFavourite = const Value.absent(),
               }) => CharactersCompanion(
                 id: id,
                 name: name,
@@ -907,6 +979,7 @@ class $$CharactersTableTableManager
                 image: image,
                 episode: episode,
                 created: created,
+                isFavourite: isFavourite,
               ),
           createCompanionCallback:
               ({
@@ -921,6 +994,7 @@ class $$CharactersTableTableManager
                 required String image,
                 required List<String> episode,
                 required DateTime created,
+                Value<bool> isFavourite = const Value.absent(),
               }) => CharactersCompanion.insert(
                 id: id,
                 name: name,
@@ -933,6 +1007,7 @@ class $$CharactersTableTableManager
                 image: image,
                 episode: episode,
                 created: created,
+                isFavourite: isFavourite,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

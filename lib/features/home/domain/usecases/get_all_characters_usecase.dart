@@ -1,5 +1,5 @@
 import 'package:riki_and_morti/core/utils/usecases/usecase.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 import 'package:riki_and_morti/features/home/domain/repositories/character_repository.dart';
 
 class GetAllCharactersUseCase extends UseCase<List<CharacterEntity>, int> {

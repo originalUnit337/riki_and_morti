@@ -1,5 +1,5 @@
-import 'package:riki_and_morti/features/home/domain/entities/location_entity.dart';
-import 'package:riki_and_morti/features/home/domain/entities/origin_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/location_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/origin_entity.dart';
 
 class CharacterEntity {
   final int id;
@@ -13,6 +13,7 @@ class CharacterEntity {
   final String image;
   final List<String> episode;
   final DateTime created;
+  final bool isFavourite;
 
   const CharacterEntity({
     required this.id,
@@ -26,5 +27,6 @@ class CharacterEntity {
     required this.image,
     required this.episode,
     required this.created,
+    required this.isFavourite,
   });
 }

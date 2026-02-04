@@ -1,8 +1,8 @@
 import 'package:riki_and_morti/core/database/app_database.dart';
-import 'package:riki_and_morti/features/home/data/mappers/location_mapper.dart';
-import 'package:riki_and_morti/features/home/data/mappers/origin_mapper.dart';
+import 'package:riki_and_morti/shared/data/mappers/location_mapper.dart';
+import 'package:riki_and_morti/shared/data/mappers/origin_mapper.dart';
 import 'package:riki_and_morti/features/home/data/models/character_model.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 
 class CharacterMapper {
   static CharacterEntity fromModel(CharacterModel model) {
@@ -17,7 +17,7 @@ class CharacterMapper {
       origin: OriginMapper.fromModel(model.origin),
       location: LocationMapper.fromModel(model.location),
       episode: model.episode,
-      image: model.image,
+      image: model.image, isFavourite: false,
     );
   }
 
@@ -34,6 +34,7 @@ class CharacterMapper {
       image: model.image,
       location: LocationMapper.fromModel(model.location),
       origin: OriginMapper.fromModel(model.origin),
+      isFavourite: model.isFavourite,
     );
   }
 
@@ -50,6 +51,7 @@ class CharacterMapper {
       image: model.image,
       location: model.location,
       origin: model.origin,
+      isFavourite: false,
     );
   }
 }

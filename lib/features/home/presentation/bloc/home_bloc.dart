@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/features/home/domain/usecases/set_favourite_character_usecase.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 import 'package:riki_and_morti/features/home/domain/usecases/get_page_character_usecase.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_event.dart';
 import 'package:riki_and_morti/features/home/presentation/bloc/home_state.dart';
@@ -13,10 +14,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   List<CharacterEntity> characters = [];
 
   final GetPageCharacterUsecase getPageCharacterUseCase;
+  final SetFavouriteCharacterUsecase setFavouriteCharacterUsecase;
 
-  HomeBloc(this.getPageCharacterUseCase) : super(HomeInitial()) {
+  HomeBloc({
+    required this.getPageCharacterUseCase,
+    required this.setFavouriteCharacterUsecase,
+  }) : super(HomeInitial()) {
     on<LoadFirstCharactersEvent>(_loadFirstPageCharacters);
     on<LoadNextPageEvent>(_loadNextPageCharacters);
+    on<SetFavouriteEvent>(_setFavourite);
   }
 
   FutureOr<void> _loadFirstPageCharacters(
@@ -69,5 +75,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _isLoading = false;
       emit((state as HomeLoadedState).copyWith(isLoadingMore: false));
     }
+  }
+
+  FutureOr<void> _setFavourite(
+    SetFavouriteEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      setFavouriteCharacterUsecase.call(params: [event.id, event.value]);
+    } catch (e) {}
   }
 }

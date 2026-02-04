@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:riki_and_morti/features/home/domain/entities/character_entity.dart';
+import 'package:riki_and_morti/shared/domain/entities/character_entity.dart';
 
 class CharacterCard extends StatelessWidget {
   final CharacterEntity character;
@@ -54,8 +54,8 @@ class CharacterCard extends StatelessWidget {
                   right: -1,
                   child: IconButton(
                     icon: Icon(
-                      // character.isFavorite
-                      // ? Icons.star
+                      character.isFavourite
+                      ? Icons.star :
                       Icons.star_border,
                       color: Colors.yellow,
                       size: 50,
