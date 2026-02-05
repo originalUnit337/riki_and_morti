@@ -4,7 +4,7 @@ import 'package:riki_and_morti/config/dependencies/init_bloc.dart';
 import 'package:riki_and_morti/config/dependencies/init_datasources.dart';
 import 'package:riki_and_morti/config/dependencies/init_repositories.dart';
 import 'package:riki_and_morti/config/dependencies/init_usecases.dart';
-import 'package:riki_and_morti/core/database/app_database.dart';
+import 'package:riki_and_morti/data/database/app_database.dart';
 
 final sl = GetIt.instance;
 

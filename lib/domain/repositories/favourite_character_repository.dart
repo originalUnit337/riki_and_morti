@@ -1,0 +1,6 @@
+import 'package:riki_and_morti/domain/entities/character_entity.dart';
+
+abstract class FavouriteCharacterRepository {
+  Stream<List<CharacterEntity>> watchFavourites();
+  Future<void> setFavourite(int id, bool value);
+}
