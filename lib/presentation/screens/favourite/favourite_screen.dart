@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:riki_and_morti/presentation/blocs/favourite_bloc/favourite_bloc.dart';
-import 'package:riki_and_morti/presentation/blocs/favourite_bloc/favourite_event.dart';
-import 'package:riki_and_morti/presentation/blocs/favourite_bloc/favourite_state.dart';
+import 'package:riki_and_morti/presentation/screens/favourite/bloc/favourite_bloc.dart';
+import 'package:riki_and_morti/presentation/screens/favourite/bloc/favourite_event.dart';
+import 'package:riki_and_morti/presentation/screens/favourite/bloc/favourite_state.dart';
 import 'package:riki_and_morti/presentation/widgets/character_card.dart';
 
 class FavouriteScreen extends StatelessWidget {

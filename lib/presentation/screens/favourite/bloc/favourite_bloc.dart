@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:riki_and_morti/domain/entities/character_entity.dart';
 import 'package:riki_and_morti/domain/usecases/set_favourite_character_usecase.dart';
 import 'package:riki_and_morti/domain/usecases/watch_favourites_usecase.dart';
-import 'package:riki_and_morti/presentation/blocs/favourite_bloc/favourite_event.dart';
-import 'package:riki_and_morti/presentation/blocs/favourite_bloc/favourite_state.dart';
+import 'package:riki_and_morti/presentation/screens/favourite/bloc/favourite_event.dart';
+import 'package:riki_and_morti/presentation/screens/favourite/bloc/favourite_state.dart';
 
 class FavouriteBloc extends Bloc<FavouriteEvent, FavouriteState> {
   final WatchFavouritesUsecase watchFavouritesUsecase;
