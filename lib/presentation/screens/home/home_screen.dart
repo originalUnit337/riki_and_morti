@@ -1,99 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:riki_and_morti/config/navigation/app_routes.dart';
+import 'package:riki_and_morti/config/dependencies/init.dart';
 import 'package:riki_and_morti/presentation/screens/home/bloc/home_bloc.dart';
 import 'package:riki_and_morti/presentation/screens/home/bloc/home_event.dart';
-import 'package:riki_and_morti/presentation/screens/home/bloc/home_state.dart';
-import 'package:riki_and_morti/presentation/widgets/character_card.dart';
+import 'package:riki_and_morti/presentation/screens/home/home_body.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final _scrollController = ScrollController();
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<HomeBloc>().add(HomeStarted());
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      context.read<HomeBloc>().add(LoadNextPageEvent());
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Riki & Morti'),
-        actions: [
-          IconButton(
-            onPressed: () => context.goNamed(AppRoutes.favourites.name),
-            icon: Icon(Icons.star),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: BlocBuilder<HomeBloc, HomeState>(
-          builder: (BuildContext context, HomeState state) {
-            return switch (state) {
-              HomeInitial() => Center(child: CircularProgressIndicator()),
-              HomeLoadingState() => Center(child: CircularProgressIndicator()),
-              HomeLoadedState() => _buildGridView(state),
-              HomeErrorState() => Text('Error: ${state.message}'),
-            };
-          },
-        ),
-      ),
+    return BlocProvider<HomeBloc>(
+      create: (_) {
+        return sl<HomeBloc>()
+          ..add(LoadFirstCharactersEvent())
+          ..add(HomeStarted());
+      },
+      child: const HomeBody(),
     );
-  }
-
-  Widget _buildGridView(HomeLoadedState state) {
-    return state.characters.isNotEmpty
-        ? GridView.builder(
-            controller: _scrollController,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: state.characters.length + (state.isLoadingMore ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= state.characters.length) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final character = state.characters[index];
-
-              return CharacterCard(
-                character: character,
-                onFavoriteTap: () {
-                  context.read<HomeBloc>().add(
-                    SetFavouriteEvent(
-                      id: character.id,
-                      value: !character.isFavourite,
-                    ),
-                  );
-                },
-              );
-            },
-          )
-        : Center(child: Text('No characters found'));
   }
 }
