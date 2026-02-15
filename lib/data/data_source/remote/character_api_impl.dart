@@ -1,7 +1,9 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:riki_and_morti/config/dependencies/init.dart';
 import 'package:riki_and_morti/core/pagination/paged_result.dart';
 import 'package:riki_and_morti/data/data_source/remote/character_api.dart';
 import 'package:riki_and_morti/data/models/character_model.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
 class CharacterApiImpl implements CharacterApi {
   final GraphQLClient client;
@@ -51,6 +53,17 @@ class CharacterApiImpl implements CharacterApi {
     );
 
     if (result.hasException) {
+      // sl.get<Talker>()
+      //   ..error(
+      //     '[1/2]GraphQL query error',
+      //     result.exception,
+      //     result.exception!.originalStackTrace,
+      //   )
+      //   ..error('''[2/2]GraphQL query error: \n
+      //   ${result.exception!.graphqlErrors} \n
+      //   [LINK EXCEPTION] ${result.exception!.linkException}
+      //   ''');
+        sl.get<Talker>().error(result.exception.toString());
       throw result.exception!;
     }
 
