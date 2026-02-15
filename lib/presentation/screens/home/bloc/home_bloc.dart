@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:riki_and_morti/core/mixins/pagination_mixin.dart';
+import 'package:riki_and_morti/core/pagination/paged_result.dart';
+import 'package:riki_and_morti/core/pagination/bloc_pagination_mixin.dart';
 import 'package:riki_and_morti/domain/entities/character_entity.dart';
 import 'package:riki_and_morti/domain/usecases/set_favourite_character_usecase.dart';
 import 'package:riki_and_morti/domain/usecases/get_page_character_usecase.dart';
@@ -9,7 +10,7 @@ import 'package:riki_and_morti/presentation/screens/home/bloc/home_event.dart';
 import 'package:riki_and_morti/presentation/screens/home/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState>
-    with PaginationMixin<CharacterEntity> {
+    with BlocPaginationMixin<CharacterEntity> {
   final GetPageCharacterUsecase getPageCharacterUseCase;
   final SetFavouriteCharacterUsecase setFavouriteCharacterUsecase;
 
@@ -24,40 +25,44 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>
     required this.setFavouriteCharacterUsecase,
     required this.watchFavouritesUsecase,
   }) : super(HomeInitial()) {
-    on<LoadFirstCharactersEvent>(_loadFirstPageCharacters);
-    on<LoadNextPageEvent>(_loadNextPageCharacters);
+    setFavouriteIdsCallback(() => _favouriteIds);
+    on<LoadFirstCharactersEvent>(_onLoadFirst);
+    on<LoadNextPageEvent>(_onLoadNext);
     on<SetFavouriteEvent>(_setFavourite);
     on<FavouritesUpdated>(_onFavouritesChanged);
     on<HomeStarted>(_onStarted);
   }
+
+  Future<PagedResult<CharacterEntity>> _fetchCharacters(int page) =>
+      getPageCharacterUseCase.call(params: page);
+
+  CharacterEntity _updateCharacter(CharacterEntity char, Set<int> favourites) =>
+      char.copyWith(isFavourite: favourites.contains(char.id));
 
   FutureOr<void> _onStarted(HomeStarted event, Emitter<HomeState> emit) async {
     await emit.forEach<List<CharacterEntity>>(
       await watchFavouritesUsecase.call(),
       onData: (favourites) {
         _syncFavourites(favourites);
-        return _buildLoadedState();
+        return HomeLoadedState(
+          characters: List.from(items),
+          isLoadingMore: isLoading,
+          hasNext: hasNext,
+        );
       },
       onError: (error, _) => HomeErrorState(message: error.toString()),
     );
   }
 
   void _syncFavourites(List<CharacterEntity> favourites) {
-    final favouriteIds = favourites.map((e) => e.id).toSet();
+    _favouriteIds.clear();
+    _favouriteIds.addAll(favourites.map((e) => e.id).toSet());
 
-    items.replaceRange(
-      0,
-      items.length,
-      items.map((e) => e.copyWith(isFavourite: favouriteIds.contains(e.id))),
-    );
-  }
-
-  HomeLoadedState _buildLoadedState() {
-    return HomeLoadedState(
-      characters: List.from(items),
-      isLoadingMore: isLoading,
-      hasNext: hasNext,
-    );
+    for (int i = 0; i < items.length; i++) {
+      items[i] = items[i].copyWith(
+        isFavourite: _favouriteIds.contains(items[i].id),
+      );
+    }
   }
 
   @override
@@ -69,82 +74,52 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>
   FutureOr<void> _onFavouritesChanged(
     FavouritesUpdated event,
     Emitter<HomeState> emit,
-  ) {
-    final favouriteIds = event.favourites.map((e) => e.id).toSet();
-
-    items.replaceRange(
-      0,
-      items.length,
-      items.map((e) => e.copyWith(isFavourite: favouriteIds.contains(e.id))),
-    );
-
+  ) async {
+    _syncFavourites(event.favourites);
     if (state is HomeLoadedState) {
-      emit(
-        HomeLoadedState(
-          characters: List.from(items),
-          isLoadingMore: isLoading,
-          hasNext: hasNext,
-        ),
-      );
+      _emitCurrentState(emit);
     }
   }
 
-  FutureOr<void> _loadFirstPageCharacters(
+  FutureOr<void> _onLoadFirst(
     LoadFirstCharactersEvent event,
     Emitter<HomeState> emit,
   ) async {
-    resetPagination();
     emit(HomeLoadingState());
-
     try {
-      final result = await getPageCharacterUseCase.call(params: page);
-
-      hasNext = result.hasNext;
-      items.addAll(
-        result.items.map(
-          (e) => e.copyWith(isFavourite: _favouriteIds.contains(e.id)),
-        ),
+      await loadFirstPage(
+        fetchData: _fetchCharacters,
+        updateItem: _updateCharacter,
       );
-
-      emit(
-        HomeLoadedState(
-          characters: List.from(items),
-          isLoadingMore: false,
-          hasNext: hasNext,
-        ),
-      );
+      _emitCurrentState(emit);
     } catch (e) {
       emit(HomeErrorState(message: e.toString()));
     }
   }
 
-  FutureOr<void> _loadNextPageCharacters(
+  FutureOr<void> _onLoadNext(
     LoadNextPageEvent event,
     Emitter<HomeState> emit,
   ) async {
     if (!canLoadNext) return;
 
-    isLoading = true;
     emit((state as HomeLoadedState).copyWith(isLoadingMore: true));
-
     try {
-      final result = await getPageCharacterUseCase.call(params: ++page);
-
-      hasNext = result.hasNext;
-      items.addAll(
-        result.items.map(
-          (e) => e.copyWith(isFavourite: _favouriteIds.contains(e.id)),
-        ),
+      await loadNextPage(
+        fetchData: _fetchCharacters,
+        updateItem: _updateCharacter,
       );
-    } catch (_) {
-    } finally {
-      isLoading = false;
+      _emitCurrentState(emit);
+    } catch (e) {
+      emit(HomeErrorState(message: e.toString()));
     }
+  }
 
+  void _emitCurrentState(Emitter<HomeState> emit) {
     emit(
       HomeLoadedState(
         characters: List.from(items),
-        isLoadingMore: false,
+        isLoadingMore: isLoading,
         hasNext: hasNext,
       ),
     );
@@ -154,23 +129,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState>
     SetFavouriteEvent event,
     Emitter<HomeState> emit,
   ) async {
-    // items.replaceRange(
-    //   0,
-    //   items.length,
-    //   items.map(
-    //     (e) => e.id == event.id ? e.copyWith(isFavourite: event.value) : e,
-    //   ),
-    // );
-
-    // setFavouriteCharacterUsecase.call(params: [event.id, event.value]);
-
-    // emit(
-    //   HomeLoadedState(
-    //     characters: List.from(items),
-    //     isLoadingMore: false,
-    //     hasNext: hasNext,
-    //   ),
-    // );
     setFavouriteCharacterUsecase.call(params: [event.id, event.value]);
   }
 }

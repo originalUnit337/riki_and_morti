@@ -1,4 +1,4 @@
-import 'package:riki_and_morti/core/common/paged_result.dart';
+import 'package:riki_and_morti/core/pagination/paged_result.dart';
 import 'package:riki_and_morti/data/data_source/local/character_drift.dart';
 import 'package:riki_and_morti/data/data_source/remote/character_api.dart';
 import 'package:riki_and_morti/data/mappers/character_mapper.dart';

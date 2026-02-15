@@ -1,5 +1,5 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:riki_and_morti/core/common/paged_result.dart';
+import 'package:riki_and_morti/core/pagination/paged_result.dart';
 import 'package:riki_and_morti/data/data_source/remote/character_api.dart';
 import 'package:riki_and_morti/data/models/character_model.dart';
 
